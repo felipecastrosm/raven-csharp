@@ -105,49 +105,54 @@ namespace SharpRaven
         public string Logger { get; set; }
 
 
-        /// <summary>
-        /// Captures the <see cref="Exception" />.
-        /// </summary>
-        /// <param name="exception">The <see cref="Exception" /> to capture.</param>
-        /// <param name="message">The optional messge to capture. Default: <see cref="Exception.Message" />.</param>
-        /// <param name="level">The <see cref="ErrorLevel" /> of the captured <paramref name="exception" />. Default: <see cref="ErrorLevel.Error" />.</param>
-        /// <param name="tags">The tags to annotate the captured <paramref name="exception" /> with.</param>
-        /// <param name="extra">The extra metadata to send with the captured <paramref name="exception" />.</param>
-        /// <returns>
-        /// The <see cref="JsonPacket.EventID" /> of the successfully captured <paramref name="exception" />, or <c>null</c> if it fails.
-        /// </returns>
-        public string CaptureException(Exception exception,
+	    /// <summary>
+	    /// Captures the <see cref="Exception" />.
+	    /// </summary>
+	    /// <param name="exception">The <see cref="Exception" /> to capture.</param>
+	    /// <param name="message">The optional messge to capture. Default: <see cref="Exception.Message" />.</param>
+	    /// <param name="level">The <see cref="ErrorLevel" /> of the captured <paramref name="exception" />. Default: <see cref="ErrorLevel.Error" />.</param>
+	    /// <param name="tags">The tags to annotate the captured <paramref name="exception" /> with.</param>
+	    /// <param name="extra">The extra metadata to send with the captured <paramref name="exception" />.</param>
+	    /// <param name="date">The date parameter overrides the event date</param>
+	    /// <returns>
+	    /// The <see cref="JsonPacket.EventID" /> of the successfully captured <paramref name="exception" />, or <c>null</c> if it fails.
+	    /// </returns>
+	    public string CaptureException(Exception exception,
                                        SentryMessage message = null,
                                        ErrorLevel level = ErrorLevel.Error,
                                        IDictionary<string, string> tags = null,
-                                       object extra = null)
+                                       object extra = null,
+									   DateTime? date = null)
         {
             JsonPacket packet = this.jsonPacketFactory.Create(this.currentDsn.ProjectID,
                                                               exception,
                                                               message,
                                                               level,
                                                               tags,
-                                                              extra);
+                                                              extra,
+															  date);
             return Send(packet, CurrentDsn);
         }
 
 
-        /// <summary>
-        /// Captures the message.
-        /// </summary>
-        /// <param name="message">The message to capture.</param>
-        /// <param name="level">The <see cref="ErrorLevel" /> of the captured <paramref name="message" />. Default <see cref="ErrorLevel.Info" />.</param>
-        /// <param name="tags">The tags to annotate the captured <paramref name="message" /> with.</param>
-        /// <param name="extra">The extra metadata to send with the captured <paramref name="message" />.</param>
-        /// <returns>
-        /// The <see cref="JsonPacket.EventID" /> of the successfully captured <paramref name="message" />, or <c>null</c> if it fails.
-        /// </returns>
-        public string CaptureMessage(SentryMessage message,
+	    /// <summary>
+	    /// Captures the message.
+	    /// </summary>
+	    /// <param name="message">The message to capture.</param>
+	    /// <param name="level">The <see cref="ErrorLevel" /> of the captured <paramref name="message" />. Default <see cref="ErrorLevel.Info" />.</param>
+	    /// <param name="tags">The tags to annotate the captured <paramref name="message" /> with.</param>
+	    /// <param name="extra">The extra metadata to send with the captured <paramref name="message" />.</param>
+		/// <param name="date">The date parameter overrides the event date</param>
+	    /// <returns>
+	    /// The <see cref="JsonPacket.EventID" /> of the successfully captured <paramref name="message" />, or <c>null</c> if it fails.
+	    /// </returns>
+	    public string CaptureMessage(SentryMessage message,
                                      ErrorLevel level = ErrorLevel.Info,
                                      Dictionary<string, string> tags = null,
-                                     object extra = null)
+                                     object extra = null,
+									 DateTime? date = null)
         {
-            JsonPacket packet = this.jsonPacketFactory.Create(CurrentDsn.ProjectID, message, level, tags, extra);
+            JsonPacket packet = this.jsonPacketFactory.Create(CurrentDsn.ProjectID, message, level, tags, extra, date);
             return Send(packet, CurrentDsn);
         }
 
